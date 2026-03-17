@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-fade-in-down: fade-in-down 0.3s ease-out;
+
+  @keyframes fade-in-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Hide Vite error overlay and connection indicator */
+vite-error-overlay, #vite-error-overlay, vite-connection-indicator, #vite-connection-indicator {
+  display: none !important;
+}
