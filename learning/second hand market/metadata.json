@@ -1,5 +1,0 @@
-{
-  "name": "Second Hand Market",
-  "description": "An e-commerce platform clone inspired by Daraz.",
-  "requestFramePermissions": ["camera", "microphone", "geolocation"]
-}
