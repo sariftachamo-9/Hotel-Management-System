@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - {{ hotel_name|default('Luxury Hotel') }}</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --primary-color: #d4af37;
+            --primary-dark: #b89222;
+            --dark-bg: #0b0b0b;
+            --darker-bg: #050505;
+            --card-bg: rgba(28, 28, 28, 0.92);
+            --text-light: #f5f5f5;
+            --text-muted: #c6c0b1;
+            --border-color: rgba(212, 175, 55, 0.35);
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(rgba(5, 5, 5, 0.75), rgba(11, 11, 11, 0.85)),
+                url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80') center/cover no-repeat;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 50px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border-top: 3px solid var(--primary-color);
+        }
+
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .form-control {
+            background: rgba(20, 20, 20, 0.92);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            color: var(--text-light);
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-control:focus {
+            background: rgba(28, 28, 28, 0.98);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.14);
+            color: var(--text-light);
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .btn-luxury {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: #0b0b0b;
+            border: none;
+            padding: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            border-radius: 10px;
+            width: 100%;
+            transition: all 0.3s;
+            float: left;
+        }
+
+        .btn-luxury:hover {
+            color: #0b0b0b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 30px 0;
+        }
+
+        .links {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            flex-wrap: nowrap;
+        }
+
+        .links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            white-space: nowrap;
+        }
+
+        .links a:hover {
+            color: var(--primary-color);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="login-card fade-in">
+                <div class="text-center mb-5">
+                    <h1 class="brand-title"><i class="bi bi-buildings-fill text-warning me-2"></i>HMS</h1>
+                    <p class="text-white-50">Welcome Back</p>
+                </div>
+
+                <div id="alertContainer"></div>
+
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" required placeholder="name@example.com">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required placeholder="********">
+                    </div>
+
+                    <button type="submit" class="btn btn-luxury mb-3">
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="divider"></div>
+
+                <div class="links d-flex justify-content-between">
+                    <a href="/"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
+                    <a href="/auth/register">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script nonce="{{ csp_nonce }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script nonce="{{ csp_nonce }}" src="{{ url_for('static', filename='js/security.js') }}"></script>
+    <script nonce="{{ csp_nonce }}">
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing In...';
+            btn.disabled = true;
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const role = data.user.role;
+                    if (role === 'Admin') {
+                        window.location.href = '/admin/dashboard';
+                    } else if (role === 'Receptionist') {
+                        window.location.href = '/receptionist/dashboard';
+                    } else {
+                        window.location.href = '/guest/dashboard';
+                    }
+                } else {
+                    showAlert(data.error || 'Login failed', 'danger');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                showAlert('An error occurred. Please try again.', 'danger');
+                console.error(error);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = '';
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show bg-${type} text-white border-0`;
+            alert.setAttribute('role', 'alert');
+            alert.textContent = message;
+
+            const closeButton = document.createElement('button');
+            closeButton.type = 'button';
+            closeButton.className = 'btn-close btn-close-white';
+            closeButton.setAttribute('data-bs-dismiss', 'alert');
+            alert.appendChild(closeButton);
+            alertContainer.appendChild(alert);
+        }
+    </script>
+</body>
+
+</html>

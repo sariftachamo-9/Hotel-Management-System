@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="card shadow-lg" style="max-width: 600px; margin: 40px auto;">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Edit Profile</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="full_name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="full_name" name="full_name" value="{{ guest.full_name }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone</label>
+                    <input type="text" class="form-control" id="phone" name="phone" value="{{ guest.phone }}">
+                </div>
+                <div class="mb-3">
+                    <label for="emergency_contact" class="form-label">Emergency Contact</label>
+                    <input type="text" class="form-control" id="emergency_contact" name="emergency_contact" value="{{ guest.emergency_contact }}">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

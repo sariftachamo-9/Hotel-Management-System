@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% block title %}Service Options{% endblock %}
+{% block sidebar %}{{ super() }}{% endblock %}
+{% block content %}
+<div class="card mt-4 admin-readable-card">
+    <div class="card-body">
+        <div class="admin-page-header">
+            <div>
+                <h2 class="admin-page-title">Service Options</h2>
+                <p class="admin-page-subtitle">Manage food, vehicle, and liquor options guests can order after check-in.</p>
+            </div>
+            <div class="admin-metric-chip">
+                <i class="bi bi-basket2"></i>
+                <span>{{ food_services|length + vehicle_services|length + liquor_services|length }} options</span>
+            </div>
+        </div>
+
+        <div class="card admin-readable-card mb-4">
+            <div class="card-header"><span class="mb-0">Add New Option</span></div>
+            <div class="card-body">
+                <form method="POST" class="row g-3" id="createServiceForm">
+                    <input type="hidden" name="action" value="create">
+                    <div class="col-md-3">
+                        <label class="form-label">Category</label>
+                        <select class="form-select" name="category" id="createCategory" required>
+                            <option value="food">Food</option>
+                            <option value="vehicle">Vehicle</option>
+                            <option value="liquor">Liquor</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Name</label>
+                        <input class="form-control" name="name" id="createName" placeholder="Optional for Food/Liquor">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Price</label>
+                        <input class="form-control" name="price" type="number" min="0" step="0.01" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Description</label>
+                        <input class="form-control" name="description" placeholder="Optional notes">
+                    </div>
+
+                    <div class="col-md-3 create-food-field">
+                        <label class="form-label">Food Type</label>
+                        <select class="form-select" name="subcategory">
+                            <option value="">Select</option>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="snacks">Snacks</option>
+                            <option value="dinner">Dinner</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 create-food-field">
+                        <label class="form-label">Food Variant</label>
+                        <select class="form-select" name="option_variant">
+                            <option value="">Select</option>
+                            <option value="veg">Veg</option>
+                            <option value="nonveg">Nonveg</option>
+                            <option value="vegan">Vegan</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 create-liquor-field d-none">
+                        <label class="form-label">Liquor Type</label>
+                        <input class="form-control" name="subcategory" placeholder="Vodka / Rum / Beer">
+                    </div>
+                    <div class="col-md-3 create-liquor-field d-none">
+                        <label class="form-label">Size Category</label>
+                        <input class="form-control" name="size_category" placeholder="60ml / 180ml / Full">
+                    </div>
+
+                    <div class="col-12">
+                        <button class="btn btn-primary" type="submit"><i class="bi bi-plus-lg me-2"></i>Add Option</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="card admin-readable-card h-100">
+                    <div class="card-header"><span class="mb-0">Food Options</span></div>
+                    <div class="card-body">
+                        {% for service in food_services %}
+                        <form method="POST" class="row g-2 align-items-end mb-3">
+                            <input type="hidden" name="service_id" value="{{ service.id }}">
+                            <input type="hidden" name="category" value="food">
+                            <div class="col-12">
+                                <label class="form-label">Name</label>
+                                <input class="form-control form-control-sm" name="name" value="{{ service.name }}">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Food Type</label>
+                                <select class="form-select form-select-sm" name="subcategory">
+                                    <option value="breakfast" {% if service.subcategory == 'breakfast' %}selected{% endif %}>Breakfast</option>
+                                    <option value="lunch" {% if service.subcategory == 'lunch' %}selected{% endif %}>Lunch</option>
+                                    <option value="snacks" {% if service.subcategory == 'snacks' %}selected{% endif %}>Snacks</option>
+                                    <option value="dinner" {% if service.subcategory == 'dinner' %}selected{% endif %}>Dinner</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Variant</label>
+                                <select class="form-select form-select-sm" name="option_variant">
+                                    <option value="veg" {% if service.option_variant == 'veg' %}selected{% endif %}>Veg</option>
+                                    <option value="nonveg" {% if service.option_variant == 'nonveg' %}selected{% endif %}>Nonveg</option>
+                                    <option value="vegan" {% if service.option_variant == 'vegan' %}selected{% endif %}>Vegan</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label">Price</label>
+                                <input class="form-control form-control-sm" name="price" type="number" min="0" step="0.01" value="{{ service.price }}">
+                            </div>
+                            <div class="col-8">
+                                <label class="form-label">Description</label>
+                                <input class="form-control form-control-sm" name="description" value="{{ service.description or '' }}">
+                            </div>
+                            <div class="col-8 d-flex gap-2 align-items-center">
+                                <button class="btn btn-outline-light btn-sm text-nowrap" type="submit" name="action" value="update">Save</button>
+                                <button class="btn btn-secondary btn-sm text-nowrap" type="submit" name="action" value="toggle">{{ 'Deactivate' if service.is_active else 'Activate' }}</button>
+                            </div>
+                            <div class="col-4 text-end small {{ 'text-success' if service.is_active else 'text-warning' }}">
+                                {{ 'Active' if service.is_active else 'Inactive' }}
+                            </div>
+                        </form>
+                        {% else %}
+                        <p class="text-muted mb-0">No food options yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card admin-readable-card h-100">
+                    <div class="card-header"><span class="mb-0">Vehicle Options</span></div>
+                    <div class="card-body">
+                        {% for service in vehicle_services %}
+                        <form method="POST" class="row g-2 align-items-end mb-3">
+                            <input type="hidden" name="service_id" value="{{ service.id }}">
+                            <input type="hidden" name="category" value="vehicle">
+                            <div class="col-12">
+                                <label class="form-label">Name</label>
+                                <input class="form-control form-control-sm" name="name" value="{{ service.name }}">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label">Price</label>
+                                <input class="form-control form-control-sm" name="price" type="number" min="0" step="0.01" value="{{ service.price }}">
+                            </div>
+                            <div class="col-8">
+                                <label class="form-label">Description</label>
+                                <input class="form-control form-control-sm" name="description" value="{{ service.description or '' }}">
+                            </div>
+                            <div class="col-8 d-flex gap-2 align-items-center">
+                                <button class="btn btn-outline-light btn-sm text-nowrap" type="submit" name="action" value="update">Save</button>
+                                <button class="btn btn-secondary btn-sm text-nowrap" type="submit" name="action" value="toggle">{{ 'Deactivate' if service.is_active else 'Activate' }}</button>
+                            </div>
+                            <div class="col-4 text-end small {{ 'text-success' if service.is_active else 'text-warning' }}">
+                                {{ 'Active' if service.is_active else 'Inactive' }}
+                            </div>
+                        </form>
+                        {% else %}
+                        <p class="text-muted mb-0">No vehicle options yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card admin-readable-card h-100">
+                    <div class="card-header"><span class="mb-0">Liquor Options</span></div>
+                    <div class="card-body">
+                        {% for service in liquor_services %}
+                        <form method="POST" class="row g-2 align-items-end mb-3">
+                            <input type="hidden" name="service_id" value="{{ service.id }}">
+                            <input type="hidden" name="category" value="liquor">
+                            <div class="col-12">
+                                <label class="form-label">Name</label>
+                                <input class="form-control form-control-sm" name="name" value="{{ service.name }}">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Liquor Type</label>
+                                <input class="form-control form-control-sm" name="subcategory" value="{{ service.subcategory or '' }}" placeholder="Vodka / Rum / Beer">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Size Category</label>
+                                <input class="form-control form-control-sm" name="size_category" value="{{ service.size_category or '' }}" placeholder="60ml / 180ml / Full">
+                            </div>
+                            <div class="col-4">
+                                <label class="form-label">Price</label>
+                                <input class="form-control form-control-sm" name="price" type="number" min="0" step="0.01" value="{{ service.price }}">
+                            </div>
+                            <div class="col-8">
+                                <label class="form-label">Description</label>
+                                <input class="form-control form-control-sm" name="description" value="{{ service.description or '' }}">
+                            </div>
+                            <div class="col-8 d-flex gap-2 align-items-center">
+                                <button class="btn btn-outline-light btn-sm text-nowrap" type="submit" name="action" value="update">Save</button>
+                                <button class="btn btn-secondary btn-sm text-nowrap" type="submit" name="action" value="toggle">{{ 'Deactivate' if service.is_active else 'Activate' }}</button>
+                            </div>
+                            <div class="col-4 text-end small {{ 'text-success' if service.is_active else 'text-warning' }}">
+                                {{ 'Active' if service.is_active else 'Inactive' }}
+                            </div>
+                        </form>
+                        {% else %}
+                        <p class="text-muted mb-0">No liquor options yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script nonce="{{ csp_nonce }}">
+    (function () {
+        const category = document.getElementById("createCategory");
+        const foodFields = document.querySelectorAll(".create-food-field");
+        const liquorFields = document.querySelectorAll(".create-liquor-field");
+        if (!category) return;
+
+        function toggleFields() {
+            const value = category.value;
+            foodFields.forEach((field) => {
+                const hide = value !== "food";
+                field.classList.toggle("d-none", hide);
+                field.querySelectorAll("input,select").forEach((el) => { el.disabled = hide; });
+            });
+            liquorFields.forEach((field) => {
+                const hide = value !== "liquor";
+                field.classList.toggle("d-none", hide);
+                field.querySelectorAll("input,select").forEach((el) => { el.disabled = hide; });
+            });
+        }
+
+        category.addEventListener("change", toggleFields);
+        toggleFields();
+    })();
+</script>
+{% endblock %}
