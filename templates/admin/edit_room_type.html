@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{% if is_new %}Add Room Type{% else %}Edit Room Type{% endif %}{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <div class="card admin-readable-card">
+        <div class="card-body">
+            <div class="admin-page-header">
+                <div>
+                    <h2 class="admin-page-title">{% if is_new %}Add Room Type{% else %}Edit Room Type{% endif %}</h2>
+                    <p class="admin-page-subtitle">Update room portfolio details without using a popup.</p>
+                </div>
+                <div class="admin-metric-chip">
+                    <i class="bi bi-door-open"></i>
+                    <span>{% if is_new %}New listing{% else %}{{ room_type.name }}{% endif %}</span>
+                </div>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="name">Room Type Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ room_type.name if room_type else '' }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="capacity">Capacity</label>
+                        <input type="number" class="form-control" id="capacity" name="capacity" min="1" value="{{ room_type.capacity if room_type else 1 }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="base_price">Base Price</label>
+                        <input type="number" class="form-control" id="base_price" name="base_price" min="0" step="0.01" value="{{ room_type.base_price if room_type else '' }}" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label" for="category">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            {% set current_category = room_type.category if room_type else 'Standard' %}
+                            <option value="Standard" {% if current_category == 'Standard' %}selected{% endif %}>Standard</option>
+                            <option value="Single" {% if current_category == 'Single' %}selected{% endif %}>Single (Solo)</option>
+                            <option value="Couple" {% if current_category == 'Couple' %}selected{% endif %}>Couple (2 Guests)</option>
+                            <option value="Family" {% if current_category == 'Family' %}selected{% endif %}>Family</option>
+                            <option value="Group" {% if current_category == 'Group' %}selected{% endif %}>Group</option>
+                            <option value="Luxury" {% if current_category == 'Luxury' %}selected{% endif %}>Luxury Suite</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="is_active">Status</label>
+                        <select class="form-select" id="is_active" name="is_active">
+                            <option value="1" {% if not room_type or room_type.is_active %}selected{% endif %}>Active</option>
+                            <option value="0" {% if room_type and not room_type.is_active %}selected{% endif %}>Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" for="image">Room Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label" for="description">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="4">{{ room_type.description if room_type else '' }}</textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label" for="amenities">Amenities</label>
+                        <input type="text" class="form-control" id="amenities" name="amenities" value="{{ room_type.amenities if room_type else '' }}">
+                        <div class="form-text">Example: Wi-Fi, AC, Balcony, Breakfast</div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 mt-4 flex-wrap">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i>{% if is_new %}Create Room Type{% else %}Save Changes{% endif %}
+                    </button>
+                    <a href="{{ url_for('admin.manage_room_types') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Room Types
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

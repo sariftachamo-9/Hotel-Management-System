@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Hotel Settings{% endblock %}
+
+{% block sidebar %}
+<li>
+    <a href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+</li>
+<li class="active">
+    <a href="{{ url_for('admin.settings') }}"><i class="bi bi-gear"></i> Hotel Settings</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.rooms') }}"><i class="bi bi-door-open"></i> Rooms</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.bookings') }}"><i class="bi bi-calendar-check"></i> Bookings</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.guests') }}"><i class="bi bi-people"></i> Guests</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.finance') }}"><i class="bi bi-cash-coin"></i> Finance</a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header py-3">
+                <h5 class="mb-0"><i class="bi bi-gear-fill me-2" style="color: var(--primary-color);"></i>Hotel
+                    Configuration</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <h6 class="text-uppercase text-muted small fw-bold mb-3">General Information</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Hotel Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ hotel.name }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Contact Phone</label>
+                            <input type="text" name="phone" class="form-control" value="{{ hotel.phone }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Contact Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ hotel.email }}">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Address</label>
+                            <input type="text" name="address" class="form-control" value="{{ hotel.address }}">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Description (for Home Page)</label>
+                            <textarea name="description" class="form-control"
+                                rows="3">{{ hotel.description }}</textarea>
+                        </div>
+                    </div>
+
+                    <h6 class="text-uppercase text-muted small fw-bold mb-3">Policies & Timings</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <label class="form-label">Check-in Time</label>
+                            <input type="time" name="check_in_time" class="form-control"
+                                value="{{ hotel.check_in_time }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Check-out Time</label>
+                            <input type="time" name="check_out_time" class="form-control"
+                                value="{{ hotel.check_out_time }}">
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label">Cancellation Policy</label>
+                            <textarea name="policy_cancellation" class="form-control"
+                                rows="2">{{ hotel.policy_cancellation }}</textarea>
+                        </div>
+                    </div>
+
+                    <h6 class="text-uppercase text-muted small fw-bold mb-3">Homepage Gallery</h6>
+                    <div class="mb-3">
+                        <label class="form-label">Gallery Images</label>
+                        <textarea name="gallery_images" class="form-control" rows="8"
+                            placeholder="One image per line. Use Title|/static/uploads/file.jpg or just /static/uploads/file.jpg.">{% for image in gallery_images %}{{ image.title }}|{{ image.url }}{% if not loop.last %}&#10;{% endif %}{% endfor %}</textarea>
+                        <small class="text-muted d-block mt-2">
+                            Add one image per line. You can use an uploaded file path like <code>/static/uploads/lobby.jpg</code> or a direct URL.
+                            If you want a custom caption, write <code>Title|URL</code>.
+                        </small>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Upload New Gallery Images</label>
+                        <input type="file" name="gallery_uploads" class="form-control" multiple accept=".png,.jpg,.jpeg,.gif,.webp">
+                        <small class="text-muted d-block mt-2">
+                            Uploaded files will be appended to the gallery list.
+                        </small>
+                    </div>
+
+                    {% if gallery_images %}
+                    <div class="row g-3 mb-4">
+                        {% for image in gallery_images %}
+                        <div class="col-md-3 col-6">
+                            <div class="border rounded p-2 bg-dark h-100">
+                                <img src="{{ image.url }}" alt="{{ image.title }}" class="img-fluid rounded mb-2" style="height: 120px; object-fit: cover; width: 100%;" data-image-fallback="true">
+                                <div class="small text-muted" style="display:none;">Image preview unavailable</div>
+                                <div class="small text-white">{{ image.title }}</div>
+                                <div class="small text-muted text-truncate">{{ image.url }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-save me-2"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Back to Dashboard Button -->
+        <div class="mt-3">
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

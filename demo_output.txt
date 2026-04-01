@@ -1,0 +1,6 @@
+Total users: 2
+A guest user already exists.
+
+Current Users:
+- admin@hotel.com (Role: Admin)
+- guest@hotel.com (Role: Guest)

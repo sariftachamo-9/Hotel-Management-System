@@ -1,0 +1,39 @@
+#include "DigiKeyboard.h"
+
+// Replace with your channel URL.
+// Tip: keep ?sub_confirmation=1 so YouTube shows the subscribe confirm flow.
+const char CHANNEL_URL[] = "https://www.youtube.com/@YOUR_CHANNEL?sub_confirmation=1";
+
+void pressTabTimes(int count, int gapMs = 300) {
+  for (int i = 0; i < count; i++) {
+    DigiKeyboard.sendKeyStroke(KEY_TAB);
+    DigiKeyboard.delay(gapMs);
+  }
+}
+
+void setup() {
+  DigiKeyboard.delay(2000);
+
+  // Open Run dialog (Win+R)
+  DigiKeyboard.sendKeyStroke(KEY_R, MOD_GUI_LEFT);
+  DigiKeyboard.delay(600);
+
+  // Launch Chrome directly to channel
+  DigiKeyboard.print("chrome --new-window ");
+  DigiKeyboard.print(CHANNEL_URL);
+  DigiKeyboard.sendKeyStroke(KEY_ENTER);
+
+  // Wait for Chrome + YouTube page load
+  DigiKeyboard.delay(8000);
+
+  // Best-effort keyboard navigation to Subscribe/confirm button.
+  // UI can vary by locale/account state; adjust tab counts if needed.
+  pressTabTimes(8, 350);
+  DigiKeyboard.sendKeyStroke(KEY_ENTER);
+  DigiKeyboard.delay(1200);
+  DigiKeyboard.sendKeyStroke(KEY_ENTER);
+}
+
+void loop() {
+  // Run once
+}

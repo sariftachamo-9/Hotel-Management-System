@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Invoice Detail{% endblock %}
+{% block content %}
+{% set bill = invoice if invoice else summary %}
+<div class="card mt-4 billing-summary-card">
+    <div class="card-body">
+        <h2 class="card-title mb-4">
+            {% if invoice %}Invoice #{{ invoice.invoice_number }}{% else %}Billing Summary #{{ summary.invoice_number }}{% endif %}
+        </h2>
+        <ul class="list-group mb-3 billing-summary-list">
+            <li class="list-group-item">Amount: <strong>Rs. {{ bill.total_amount }}</strong></li>
+            <li class="list-group-item">Paid: <strong>Rs. {{ bill.amount_paid }}</strong></li>
+            <li class="list-group-item">Balance: <strong>Rs. {{ bill.balance }}</strong></li>
+            <li class="list-group-item">Date: {{ bill.generated_at }}</li>
+            <li class="list-group-item">Room Charges: {{ bill.room_charges }}</li>
+            <li class="list-group-item">Service Charges: {{ bill.service_charges }}</li>
+            <li class="list-group-item">Tax: {{ bill.tax_amount }}</li>
+            <li class="list-group-item">Discount: {{ bill.discount }}</li>
+            {% if summary and summary.is_estimate %}
+            <li class="list-group-item">Status: Estimated running bill for your current stay</li>
+            {% endif %}
+            <li class="list-group-item">Notes: {{ bill.notes or '-' }}</li>
+        </ul>
+        <a href="{{ url_for('guest.guest_invoices') }}" class="btn btn-secondary">Back to Invoices</a>
+    </div>
+</div>
+{% endblock %}

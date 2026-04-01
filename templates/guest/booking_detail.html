@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Booking Details{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="card" style="max-width: 800px; margin: 40px auto;">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Booking Details</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-4">Room Type</dt>
+                <dd class="col-sm-8">{{ booking.room.room_type.name if booking.room and booking.room.room_type else 'N/A' }}</dd>
+                <dt class="col-sm-4">Room Number</dt>
+                <dd class="col-sm-8">{{ booking.room.room_number if booking.room else 'N/A' }}</dd>
+                <dt class="col-sm-4">Check-in Date</dt>
+                <dd class="col-sm-8">{{ booking.check_in_date or 'N/A' }}</dd>
+                <dt class="col-sm-4">Check-out Date</dt>
+                <dd class="col-sm-8">{{ booking.check_out_date or 'N/A' }}</dd>
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8">{{ booking.booking_status or 'N/A' }}</dd>
+                <dt class="col-sm-4">Special Requests</dt>
+                <dd class="col-sm-8">{{ booking.special_requests or 'None' }}</dd>
+            </dl>
+            <a href="{{ url_for('guest.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

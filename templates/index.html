@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ hotel.name }} | Luxury Experience</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --primary-color: #d4af37;
+            --primary-dark: #b89222;
+            --dark-bg: #0b0b0b;
+            --darker-bg: #050505;
+            --card-bg: rgba(28, 28, 28, 0.92);
+            --text-light: #f5f5f5;
+            --text-muted: #c6c0b1;
+            --border-color: rgba(212, 175, 55, 0.32);
+            --section-padding: 80px 0;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            color: var(--text-light);
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 45%, #1c1c1c 100%);
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Navbar */
+        .navbar-luxury {
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: white !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.55rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            background: rgba(10, 10, 10, 0.45);
+            border: 1px solid rgba(212, 175, 55, 0.18);
+            min-height: 44px;
+            transition: background 0.3s ease, border-color 0.3s ease, width 0.35s ease, padding 0.35s ease;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .navbar-brand .brand-icon {
+            color: var(--primary-color);
+            font-size: 1rem;
+            line-height: 1;
+            flex: 0 0 auto;
+        }
+
+        .navbar-brand .brand-text {
+            color: #ffffff;
+            display: inline-block;
+            max-width: 280px;
+            opacity: 1;
+            transform: translateX(0);
+            transition: max-width 0.35s ease, opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .navbar-luxury.scrolled .navbar-brand {
+            background: rgba(22, 22, 22, 0.86);
+            border-color: rgba(212, 175, 55, 0.32);
+            width: 56px;
+            padding: 0.35rem;
+            justify-content: center;
+            gap: 0;
+        }
+
+        .navbar-luxury.scrolled .navbar-brand .brand-text {
+            max-width: 0;
+            opacity: 0;
+            transform: translateX(-8px);
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 400;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            height: 100vh;
+            background: linear-gradient(rgba(5, 5, 5, 0.74), rgba(11, 11, 11, 0.82)),
+                url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80') center/cover no-repeat;
+            background-attachment: fixed;
+            background-position: center center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+            text-align: center;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.18), transparent 55%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Booking Widget */
+        .booking-widget-wrapper {
+            margin-top: -100px;
+            position: relative;
+            z-index: 100;
+            padding: 0 20px;
+        }
+
+        .booking-widget {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        #check-form .form-label {
+            color: var(--text-muted) !important;
+            letter-spacing: 0.06em;
+        }
+
+        /* Buttons */
+        .btn-luxury {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: #0b0b0b;
+            border: none;
+            padding: 12px 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-luxury:hover {
+            color: #0b0b0b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
+        }
+
+        /* Sections */
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .section-title .separator {
+            width: 80px;
+            height: 3px;
+            background: var(--primary-color);
+            margin: 0 auto;
+        }
+
+        /* About Section */
+        .about-img {
+            border-radius: 4px;
+            box-shadow: 20px 20px 0 rgba(198, 163, 85, 0.2);
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        /* Rooms */
+        .room-card {
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(18, 18, 18, 0.94);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
+            transition: transform 0.3s;
+            height: 100%;
+        }
+
+        .room-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .room-card img {
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .room-image-placeholder {
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            background: linear-gradient(145deg, rgba(20, 20, 20, 0.96), rgba(10, 10, 10, 0.96));
+            border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+            color: var(--text-muted);
+        }
+
+        .room-image-placeholder i {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        /* Amenities */
+        .amenity-item {
+            text-align: center;
+            padding: 30px;
+            background: rgba(18, 18, 18, 0.94);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            transition: all 0.3s;
+        }
+
+        .amenity-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+        }
+
+        .amenity-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        /* Offers */
+        .offer-card {
+            background: linear-gradient(135deg, rgba(5, 5, 5, 0.98), rgba(28, 28, 28, 0.95));
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            height: 100%;
+        }
+
+        .offer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://www.transparenttextures.com/patterns/cubes.png');
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .offer-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .offer-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* Reviews */
+        .review-card {
+            background: rgba(18, 18, 18, 0.94);
+            padding: 40px;
+            border-left: 4px solid var(--primary-color);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+            margin-bottom: 20px;
+        }
+
+        /* Map */
+        .map-section iframe {
+            width: 100%;
+            height: 450px;
+            border: 0;
+            filter: grayscale(20%) contrast(1.2) opacity(0.9);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(5, 5, 5, 0.98);
+            color: white;
+            padding: 80px 0 30px;
+            border-top: 1px solid rgba(212, 175, 55, 0.18);
+        }
+
+        footer h4,
+        footer h5 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        footer a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: white;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .bg-light {
+            background: rgba(16, 16, 16, 0.95) !important;
+            color: var(--text-light) !important;
+        }
+
+        #rooms,
+        #offers,
+        #reviews {
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+        }
+
+        .gallery-frame {
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(10, 10, 10, 0.92);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: clamp(240px, 56vh, 620px);
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .gallery-thumb {
+            height: 62px;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 1200px) {
+            .hero-section {
+                background-attachment: scroll;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            .navbar-luxury {
+                padding: 10px 0;
+            }
+
+            .navbar-toggler {
+                border-color: rgba(212, 175, 55, 0.45);
+                box-shadow: none !important;
+            }
+
+            .navbar-collapse {
+                margin-top: 0.75rem;
+                padding: 0.8rem;
+                border-radius: 12px;
+                background: rgba(10, 10, 10, 0.95);
+                border: 1px solid rgba(212, 175, 55, 0.22);
+            }
+
+            .navbar-nav {
+                gap: 0.15rem;
+            }
+
+            .navbar-nav .nav-link {
+                padding: 0.62rem 0.75rem;
+                margin: 0;
+                border-radius: 8px;
+            }
+
+            .navbar-nav .nav-item .btn {
+                width: 100%;
+                margin: 0.45rem 0 0 !important;
+            }
+
+            .hero-section {
+                min-height: 88vh;
+                height: auto;
+                padding: 6.2rem 0 4rem;
+            }
+
+            .hero-content h1 {
+                font-size: clamp(2rem, 8vw, 3.1rem);
+                line-height: 1.12;
+            }
+
+            .hero-content p {
+                font-size: clamp(1rem, 3.2vw, 1.2rem);
+                margin-bottom: 1.2rem;
+            }
+
+            .booking-widget-wrapper {
+                margin-top: -36px;
+                padding: 0 12px;
+            }
+
+            .booking-widget {
+                padding: 18px;
+            }
+
+            #check-form .col-md-2,
+            #check-form .col-md-3 {
+                width: 100%;
+            }
+
+            #check-form .btn-lg,
+            #check-form .form-control-lg,
+            #check-form .form-select-lg {
+                font-size: 0.95rem;
+                padding-top: 0.72rem;
+                padding-bottom: 0.72rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #about,
+            #rooms,
+            #amenities,
+            #offers,
+            #gallery,
+            #reviews {
+                padding: 64px 0 !important;
+            }
+
+            .section-title {
+                margin-bottom: 2rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.9rem;
+            }
+
+            .about-img {
+                height: 260px;
+                box-shadow: 10px 10px 0 rgba(198, 163, 85, 0.18);
+            }
+
+            .room-card img,
+            .room-image-placeholder {
+                height: 210px;
+            }
+
+            .room-card:hover,
+            .amenity-item:hover {
+                transform: none;
+            }
+
+            .offer-card,
+            .review-card {
+                padding: 22px;
+            }
+
+            .map-section iframe {
+                height: 300px;
+            }
+
+            footer {
+                padding: 56px 0 24px;
+            }
+
+            .gallery-image {
+                height: clamp(220px, 42vh, 360px);
+            }
+
+            .gallery-thumb {
+                height: 52px;
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .navbar-brand {
+                max-width: calc(100vw - 110px);
+            }
+
+            .navbar-brand .brand-text {
+                max-width: 180px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .navbar-luxury.scrolled .navbar-brand {
+                width: 52px;
+            }
+
+            .hero-content .btn-lg {
+                width: 100%;
+                max-width: 260px;
+            }
+
+            .room-filter-group {
+                width: 100%;
+                justify-content: flex-start !important;
+                overflow-x: auto;
+                padding-bottom: 0.25rem;
+                scrollbar-width: thin;
+            }
+
+            .room-filter-group .btn {
+                flex: 0 0 auto;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        .form-control,
+        .form-select {
+            background: rgba(20, 20, 20, 0.92) !important;
+            border: 1px solid rgba(212, 175, 55, 0.25) !important;
+            color: var(--text-light) !important;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.14) !important;
+        }
+
+        .btn-outline-dark {
+            color: var(--text-light);
+            border-color: rgba(212, 175, 55, 0.35);
+            background: rgba(20, 20, 20, 0.9);
+        }
+
+        .btn-outline-dark:hover,
+        .btn-outline-dark:focus,
+        .btn-outline-dark.active,
+        .btn-dark {
+            color: #0b0b0b !important;
+            border-color: transparent !important;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+        }
+    </style>
+</head>
+
+<body data-bs-spy="scroll" data-bs-target="#navbar-main" data-bs-offset="100" data-server-authenticated="{{ 'true' if current_user else 'false' }}" data-user-role="{{ current_user.role if current_user else '' }}">
+
+    <!-- 1️⃣ Navbar -->
+    <nav id="navbar-main" class="navbar navbar-expand-lg navbar-dark navbar-luxury fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-buildings-fill brand-icon" aria-hidden="true"></i>
+                <span class="brand-text">{{ hotel.name }}</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#gallery">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+
+                    {% if current_user %}
+                    <li class="nav-item ms-3" id="authLoggedInNav">
+                        {% if current_user.role == 'Admin' %}
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-light btn-sm">Admin Dashboard</a>
+                        {% elif current_user.role == 'Guest' %}
+                        <a href="{{ url_for('guest.dashboard') }}" class="btn btn-outline-light btn-sm">My Dashboard</a>
+                        {% endif %}
+                    </li>
+                    <li class="nav-item ms-3" id="authLoggedInLogoutNav">
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item ms-3" id="authLoggedOutNav">
+                        <a href="/auth/login" class="nav-link">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#booking-widget" class="btn btn-luxury btn-sm ms-2">Book Now</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1️⃣ Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container hero-content">
+            <h1>{{ hotel.name }}</h1>
+            <p>Luxury stays with breathtaking views</p>
+            <a href="#rooms" class="btn btn-luxury btn-lg">View Our Rooms</a>
+        </div>
+    </section>
+
+    <!-- 9️⃣ Booking Widget (Placed here to overlap) -->
+    <div id="booking-widget" class="container booking-widget-wrapper">
+        <div class="booking-widget">
+            <form id="check-form" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">CHECK-IN</label>
+                    <input type="date" name="check_in" class="form-control form-control-lg border-0 bg-light" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-muted small fw-bold">CHECK-OUT</label>
+                    <input type="date" name="check_out" class="form-control form-control-lg border-0 bg-light" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label text-muted small fw-bold">GUESTS</label>
+                    <select name="guests" class="form-select form-select-lg border-0 bg-light">
+                        <option value="1">1 Guest</option>
+                        <option value="2" selected>2 Guests</option>
+                        <option value="3">3 Guests</option>
+                        <option value="4">4 Guests</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label text-muted small fw-bold">PROMO CODE</label>
+                    <input type="text" name="promo_code" class="form-control form-control-lg border-0 bg-light"
+                        placeholder="Optional">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="button" id="checkRatesBtn" class="btn btn-luxury btn-lg">Check Rates</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2️⃣ About Section -->
+    <section id="about" style="padding: 100px 0;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="pe-lg-5">
+                        <h6 class="text-uppercase text-warning fw-bold mb-3">About {{ hotel.name }}</h6>
+                        <h2 class="display-5 mb-4 font-serif">A Sanctuary of Luxury & Peace</h2>
+                        <div class="mb-4 text-warning">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+                        <p class="text-muted lead mb-4">
+                            Experience the epitome of hospitality at {{ hotel.name }}. Located in the heart of the city,
+                            we offer an escape from the ordinary with our world-class amenities and breathtaking views.
+                        </p>
+                        <ul class="list-unstyled text-muted mb-5">
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-warning me-2"></i>Sea-view rooms
+                                with private balconies</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-warning me-2"></i>Award-winning fine
+                                dining restaurants</li>
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-warning me-2"></i>Premium spa and
+                                wellness center</li>
+                        </ul>
+                        <a href="#rooms" class="btn btn-outline-dark">Explore Rooms</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80"
+                        alt="Hotel Interior" class="about-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3️⃣ Rooms Section -->
+    <section id="rooms" class="bg-light" style="padding: 100px 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Accommodations</h2>
+                <div class="separator"></div>
+                <p class="text-muted mt-3">Choose from our variety of luxurious rooms</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="d-flex justify-content-center mb-5">
+                <div class="d-flex flex-wrap justify-content-center gap-2 room-filter-group">
+                    <button type="button" class="btn btn-outline-dark active px-4 py-2 rounded-pill" data-room-filter="all">All</button>
+                    <button type="button" class="btn btn-outline-dark px-4 py-2 rounded-pill" data-room-filter="Single">Single</button>
+                    <button type="button" class="btn btn-outline-dark px-4 py-2 rounded-pill" data-room-filter="Couple">Couple</button>
+                    <button type="button" class="btn btn-outline-dark px-4 py-2 rounded-pill" data-room-filter="Family">Family</button>
+                    <button type="button" class="btn btn-outline-dark px-4 py-2 rounded-pill" data-room-filter="Luxury">Luxury</button>
+                </div>
+            </div>
+
+            <div class="row g-4" id="room-grid">
+                {% for room in rooms %}
+                <div class="col-sm-6 col-lg-4 room-item" data-category="{{ room.category or 'Standard' }}">
+                    <div class="room-card h-100">
+                        {% if room.image_path %}
+                        <img src="{{ room.image_path }}"
+                            class="card-img-top" alt="{{ room.name }}"
+                            loading="lazy" decoding="async" data-room-image="true">
+                        <div class="room-image-placeholder d-none">
+                            <i class="bi bi-image"></i>
+                            <small>Room photo unavailable</small>
+                        </div>
+                        {% else %}
+                        <div class="room-image-placeholder">
+                            <i class="bi bi-camera"></i>
+                            <small>Upload a real room photo</small>
+                        </div>
+                        {% endif %}
+                        <div class="card-body p-4">
+                            <h4 class="card-title">{{ room.name }}</h4>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-light text-light">{{ room.category or 'Standard' }}</span>
+                                <span class="text-warning fw-bold">Rs. {{ room.base_price }}/night</span>
+                            </div>
+                            <p class="card-text text-muted small mb-4">{{ room.description }}</p>
+                            <hr class="text-muted opacity-25">
+                            <div class="mb-4">
+                                {% if room.amenities %}
+                                {% for amenity in room.amenities.split(',')[:3] %}
+                                <small class="text-muted me-2"><i class="bi bi-dot"></i>{{ amenity }}</small>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="d-grid">
+                                <button class="btn btn-outline-dark" type="button" data-room-id="{{ room.id }}" data-room-name="{{ room.name }}">Select Room</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div id="no-rooms-msg" class="text-center mt-5 d-none">
+                <p class="text-muted">No rooms found in this category.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4️⃣ Amenities Section -->
+    <section id="amenities" style="padding: 100px 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Amenities</h2>
+                <div class="separator"></div>
+                <p class="text-muted mt-3">Designed for your comfort and convenience</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="amenity-item">
+                        <i class="bi bi-wifi amenity-icon"></i>
+                        <h5>High-Speed Wi-Fi</h5>
+                        <p class="text-muted small">Stay connected with complimentary high-speed internet access
+                            throughout the property.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="amenity-item">
+                        <i class="bi bi-water amenity-icon"></i>
+                        <h5>Infinity Pool</h5>
+                        <p class="text-muted small">Relax in our stunning infinity pool overlooking the city skyline.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="amenity-item">
+                        <i class="bi bi-cup-hot amenity-icon"></i>
+                        <h5>Fine Dining</h5>
+                        <p class="text-muted small">Savor exquisite culinary delights at our award-winning restaurants.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="amenity-item">
+                        <i class="bi bi-car-front amenity-icon"></i>
+                        <h5>Valet Parking</h5>
+                        <p class="text-muted small">Secure and convenient valet parking services for all guests.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="amenity-item">
+                        <i class="bi bi-hospital amenity-icon"></i>
+                        <h5>Wellness Spa</h5>
+                        <p class="text-muted small">Rejuvenate your body and mind with our premium spa treatments.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="amenity-item">
+                        <i class="bi bi-person-workspace amenity-icon"></i>
+                        <h5>Conference Rooms</h5>
+                        <p class="text-muted small">Fully equipped modern conference rooms for your business needs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6️⃣ Offers Section -->
+    <section id="offers" class="bg-light" style="padding: 100px 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Exclusive Offers</h2>
+                <div class="separator"></div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="offer-card">
+                        <span class="offer-badge">LIMITED TIME</span>
+                        <h3>Summer Escape</h3>
+                        <p class="lead mb-4">Get 20% off on 3+ nights stay</p>
+                        <p class="small opacity-75 mb-4">Valid for stays until August 31st. Includes complimentary
+                            breakfast.</p>
+                        <button class="btn btn-outline-light book-offer-btn" data-offer="Summer Escape">Book Offer</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="offer-card">
+                        <span class="offer-badge">POPULAR</span>
+                        <h3>Romantic Getaway</h3>
+                        <p class="lead mb-4">Spa Credit + Dinner for Two</p>
+                        <p class="small opacity-75 mb-4">Perfect for couples. Includes sparkling wine on arrival.</p>
+                        <button class="btn btn-outline-light book-offer-btn" data-offer="Romantic Getaway">Book Offer</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="offer-card">
+                        <span class="offer-badge">early bird</span>
+                        <h3>Advance Purchase</h3>
+                        <p class="lead mb-4">Save 15% when booking 30 days ahead</p>
+                        <p class="small opacity-75 mb-4">Non-refundable. Full payment required at time of booking.</p>
+                        <button class="btn btn-outline-light book-offer-btn" data-offer="Advance Purchase">Book Offer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8️⃣ Gallery Section -->
+    <section id="gallery" style="padding: 100px 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Gallery</h2>
+                <div class="separator"></div>
+                <p class="text-muted mt-3">Glimpses of our paradise in Pokhara</p>
+            </div>
+            <div id="hotelCarousel" class="carousel slide" data-bs-ride="false" data-bs-touch="true">
+                <div class="carousel-inner shadow-lg rounded gallery-frame" id="gallery-carousel-inner">
+                    <!-- Images will be injected via JS -->
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#hotelCarousel"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#hotelCarousel"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+            <!-- Thumbnails Preview (Optional structure if we wanted to go simple, but let's stick to main carousel) -->
+            <div class="row g-2 mt-3 d-none d-md-flex" id="gallery-thumbnails">
+                <!-- Thumbs injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 7️⃣ Reviews / Testimonials -->
+    <section id="reviews" class="bg-light" style="padding: 100px 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Guest Reviews</h2>
+                <div class="separator"></div>
+            </div>
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-6 text-center">
+                    <div class="display-4 fw-bold text-warning">{{ reviews.average_rating }}</div>
+                    <div class="text-warning fs-4 mb-2">
+                        {% for i in range(reviews.average_rating|int) %}★{% endfor %}
+                        {% if (reviews.average_rating % 1) >= 0.5 %}½{% endif %}
+                    </div>
+                    <p class="text-muted">Based on {{ reviews.total_count }} verified reviews</p>
+                </div>
+            </div>
+            <div class="row g-4">
+                {% for review in reviews.reviews %}
+                <div class="col-md-6 mb-4">
+                    <div class="review-card h-100">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h5 class="mb-0 fw-bold">{{ review.guest_name }}</h5>
+                            <span class="badge bg-success">{{ review.rating }}/5</span>
+                        </div>
+                        <p class="text-muted fst-italic">"{{ review.comment }}"</p>
+                        <small class="text-muted d-block mt-3 text-end">- {{ review.date }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- 5️⃣ Location & Map -->
+    <section id="contact" class="map-section">
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d56272.93771966952!2d83.93888801953123!3d28.209605700000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3995937bbf0376ff%3A0xf6cf823b977751d5!2sPokhara%2C%20Nepal!5e0!3m2!1sen!2snp!4v1699999999999!5m2!1sen!2snp"
+            allowfullscreen="" loading="lazy"></iframe>
+    </section>
+
+    <!-- 1️⃣0️⃣ Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <h4 class="mb-4">{{ hotel.name }}</h4>
+                    <p class="text-white-50">{{ hotel.description or 'A luxury hotel experience.' }}</p>
+                    <div class="social-links mt-4">
+                        <a href="#" class="me-3 fs-5"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="me-3 fs-5"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="me-3 fs-5"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="fs-5"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#home">Home</a></li>
+                        <li class="mb-2"><a href="#rooms">Rooms</a></li>
+                        <li class="mb-2"><a href="#offers">Offers</a></li>
+                        <li class="mb-2"><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled text-white-50">
+                        <li class="mb-3"><i class="bi bi-geo-alt me-2 text-warning"></i>Lakeside, Pokhara, Nepal</li>
+                        <li class="mb-3"><i class="bi bi-telephone me-2 text-warning"></i>{{ hotel.phone }}</li>
+                        <li class="mb-3"><i class="bi bi-envelope me-2 text-warning"></i>{{ hotel.email }}</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <h5>Newsletter</h5>
+                    <p class="text-white-50 small mb-3">Subscribe to get the latest offers and updates.</p>
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your Email">
+                        <button class="btn btn-luxury"><i class="bi bi-send"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top border-secondary mt-5 pt-4 text-center text-white-50">
+                <p>&copy; 2026 {{ hotel.name }}. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Availability Modal -->
+    <div class="modal fade" id="availabilityModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">Live Rate Check</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="rateResults">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-warning" role="status"></div>
+                        <p class="mt-2">Calculating best rates...</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script nonce="{{ csp_nonce }}" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script nonce="{{ csp_nonce }}" src="{{ url_for('static', filename='js/security.js') }}"></script>
+    <script nonce="{{ csp_nonce }}">
+        // Navbar scroll effect (throttled for smoother scrolling)
+        const navbar = document.querySelector('.navbar-luxury');
+        let navCompact = false;
+        let navTicking = false;
+
+        function applyNavbarState() {
+            const shouldCompact = window.scrollY > 50;
+            if (shouldCompact === navCompact) return;
+
+            navCompact = shouldCompact;
+            navbar.classList.toggle('scrolled', shouldCompact);
+            navbar.style.padding = shouldCompact ? '10px 0' : '15px 0';
+            navbar.style.background = shouldCompact ? 'rgba(5, 5, 5, 0.98)' : 'rgba(5, 5, 5, 0.95)';
+        }
+
+        window.addEventListener('scroll', () => {
+            if (navTicking) return;
+            navTicking = true;
+            window.requestAnimationFrame(() => {
+                applyNavbarState();
+                navTicking = false;
+            });
+        }, { passive: true });
+        applyNavbarState();
+
+        // Mobile navbar: close menu after selecting a link/action
+        document.querySelectorAll('#navbarNav .nav-link, #navbarNav .btn').forEach((item) => {
+            item.addEventListener('click', () => {
+                const navCollapse = document.getElementById('navbarNav');
+                if (!navCollapse.classList.contains('show')) return;
+                bootstrap.Collapse.getOrCreateInstance(navCollapse).hide();
+            });
+        });
+
+        // Filter Rooms
+        function normalizeRoomCategory(value) {
+            const category = (value || '').toString().trim().toLowerCase();
+
+            if (!category) return 'standard';
+            if (category.includes('single')) return 'single';
+            if (category.includes('couple') || category.includes('double') || category.includes('pair')) return 'couple';
+            if (category.includes('family')) return 'family';
+            if (category.includes('luxury') || category.includes('deluxe') || category.includes('suite') || category.includes('premium')) return 'luxury';
+            if (category.includes('standard')) return 'single';
+
+            return category;
+        }
+
+        function filterRooms(category, btn) {
+            const selectedCategory = normalizeRoomCategory(category);
+
+            // Remove active and btn-dark from all, add btn-outline-dark
+            document.querySelectorAll('.room-filter-group .btn').forEach(b => {
+                b.classList.remove('active', 'btn-dark');
+                b.classList.add('btn-outline-dark');
+                b.classList.remove('bg-dark', 'text-white');
+            });
+            // Add active and btn-dark to selected, remove btn-outline-dark
+            btn.classList.add('active', 'btn-dark', 'text-white');
+            btn.classList.remove('btn-outline-dark');
+
+            const rooms = document.querySelectorAll('.room-item');
+            let visibleCount = 0;
+
+            rooms.forEach(room => {
+                const roomCategory = normalizeRoomCategory(room.getAttribute('data-category'));
+                if (selectedCategory === 'all' || roomCategory === selectedCategory) {
+                    room.style.display = 'block';
+                    room.style.opacity = '0';
+                    setTimeout(() => room.style.opacity = '1', 50);
+                    visibleCount++;
+                } else {
+                    room.style.display = 'none';
+                }
+            });
+
+            const msg = document.getElementById('no-rooms-msg');
+            if (visibleCount === 0) {
+                msg.classList.remove('d-none');
+            } else {
+                msg.classList.add('d-none');
+            }
+        }
+
+        // Room Selection
+        let selectedRoomTypeId = 1;
+
+        function selectRoom(id, name, btnElement) {
+            selectedRoomTypeId = id;
+
+            // Scroll to widget
+            document.querySelector('.booking-widget').scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Pop an alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show fixed-top m-3 shadow-lg';
+            alertDiv.style.maxWidth = '400px';
+            alertDiv.style.left = 'auto';
+            const alertText = document.createElement('span');
+            alertText.innerHTML = '';
+            alertText.textContent = `${name} selected! Please choose dates below.`;
+            const closeButton = document.createElement('button');
+            closeButton.type = 'button';
+            closeButton.className = 'btn-close';
+            closeButton.setAttribute('data-bs-dismiss', 'alert');
+            alertDiv.appendChild(alertText);
+            alertDiv.appendChild(closeButton);
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => { alertDiv.remove(); }, 3000);
+        }
+
+        document.querySelectorAll('[data-room-filter]').forEach((button) => {
+            button.addEventListener('click', function () {
+                filterRooms(this.getAttribute('data-room-filter'), this);
+            });
+        });
+
+        document.querySelectorAll('[data-room-id]').forEach((button) => {
+            button.addEventListener('click', function () {
+                selectRoom(this.getAttribute('data-room-id'), this.getAttribute('data-room-name') || 'Room', this);
+            });
+        });
+
+        document.querySelectorAll('[data-room-image="true"]').forEach((image) => {
+            image.addEventListener('error', function () {
+                this.classList.add('d-none');
+                if (this.nextElementSibling) {
+                    this.nextElementSibling.classList.remove('d-none');
+                }
+            });
+        });
+
+        const checkRatesBtn = document.getElementById('checkRatesBtn');
+        if (checkRatesBtn) {
+            checkRatesBtn.addEventListener('click', checkRates);
+        }
+
+        // Check Rates Logic
+        async function checkRates() {
+            const form = document.getElementById('check-form');
+            const checkIn = form.elements['check_in'].value;
+            const checkOut = form.elements['check_out'].value;
+            const guests = form.elements['guests'].value;
+            const promoCode = form.elements['promo_code'].value;
+
+            if (!checkIn || !checkOut) {
+                alert("Please select both check-in and check-out dates");
+                return;
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const checkInDate = new Date(checkIn);
+            const checkOutDate = new Date(checkOut);
+
+            if (checkInDate < today) {
+                alert("Check-in date cannot be in the past!");
+                return;
+            }
+
+            if (checkOutDate <= checkInDate) {
+                alert("Check-out date must be after check-in date!");
+                return;
+            }
+
+            const data = {
+                check_in: checkIn,
+                check_out: checkOut,
+                guests: guests,
+                promo_code: promoCode,
+                room_type_id: selectedRoomTypeId
+            };
+
+            const modal = new bootstrap.Modal(document.getElementById('availabilityModal'));
+            modal.show();
+
+            const resultContainer = document.getElementById('rateResults');
+            resultContainer.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="spinner-border text-warning" role="status"></div>
+                    <p class="mt-2">Connecting to Pricing Engine...</p>
+                </div>`;
+
+            try {
+                const response = await fetch('/check-availability', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    const errorAlert = document.createElement('div');
+                    errorAlert.className = 'alert alert-danger';
+                    errorAlert.textContent = result.error;
+                    resultContainer.innerHTML = '';
+                    resultContainer.appendChild(errorAlert);
+                    return;
+                }
+
+                const prices = result.price_breakdown;
+                let html = `
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <h5 class="text-primary mb-3">Price Breakdown</h5>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Base Rate (${prices.total_nights} nights)</span>
+                                    <span>Rs. ${prices.total_base}</span>
+                                </li>
+                                ${prices.season_multiplier > 1 ? `
+                                <li class="list-group-item d-flex justify-content-between text-warning">
+                                    <span>Date Adjustment (${prices.season_name})</span>
+                                    <span>x${prices.season_multiplier}</span>
+                                </li>` : ''}
+                                <li class="list-group-item d-flex justify-content-between bg-light">
+                                    <span>Taxes & Fees</span>
+                                    <span>Rs. ${(prices.service_charge + prices.tax).toFixed(2)}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-5 text-center">
+                             <div class="card bg-dark text-white p-3">
+                                <h6 class="text-white-50">TOTAL ESTIMATE</h6>
+                                <h2 class="display-6 fw-bold mb-0 text-warning">Rs. ${prices.grand_total}</h2>
+                                <small class="text-white-50">Includes all taxes</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                resultContainer.innerHTML = html;
+
+                const bookingUrl = `/guest/book?room_type_id=${data.room_type_id}&check_in=${data.check_in}&check_out=${data.check_out}&guests=${data.guests}&promo=${data.promo_code || ''}`;
+                const footer = document.querySelector('#availabilityModal .modal-footer');
+                footer.innerHTML = `
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="${bookingUrl}" class="btn btn-primary">Proceed to Booking</a>
+                `;
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultContainer.innerHTML = `<div class="alert alert-danger">System Error: Could not calculate rates.</div>`;
+            }
+        }
+
+        // 🖼️ Gallery Population
+        document.addEventListener('DOMContentLoaded', () => {
+            const configuredGalleryImages = {{ hotel.gallery_images | default([], true) | tojson }};
+            const roomFallbackImages = [
+                {% for room in rooms if room.image_path %}
+                { title: {{ room.name | tojson }}, url: {{ room.image_path | tojson }} }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ];
+            const legacyGalleryImages = [
+                { url: 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1400&q=72', title: 'Machhapuchhre View' },
+                { url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1400&q=72', title: 'Grand Entrance' },
+                { url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=1400&q=72', title: 'Cozy Interiors' }
+            ];
+            const galleryImages = configuredGalleryImages.length > 0
+                ? configuredGalleryImages
+                : (roomFallbackImages.length > 0 ? roomFallbackImages : legacyGalleryImages);
+
+            const fallbackUrls = legacyGalleryImages.map((img) => img.url);
+
+            const carouselInner = document.getElementById('gallery-carousel-inner');
+            const thumbnails = document.getElementById('gallery-thumbnails');
+            const gallerySection = document.getElementById('gallery');
+            let galleryRendered = false;
+
+            function applyFallbackImage(element, fallbackIndex) {
+                if (fallbackIndex >= fallbackUrls.length) return;
+                element.onerror = () => applyFallbackImage(element, fallbackIndex + 1);
+                element.src = fallbackUrls[fallbackIndex];
+            }
+
+            function renderGallery() {
+                if (galleryRendered) return;
+                galleryRendered = true;
+
+                galleryImages.forEach((img, index) => {
+                    const item = document.createElement('div');
+                    item.className = `carousel-item ${index === 0 ? 'active' : ''}`;
+
+                    const image = document.createElement('img');
+                    image.className = 'gallery-image';
+                    image.alt = img.title;
+                    image.src = img.url;
+                    image.srcset = '';
+                    image.sizes = '';
+                    image.loading = index < 3 ? 'eager' : 'lazy';
+                    image.decoding = 'async';
+                    image.fetchPriority = index === 0 ? 'high' : 'low';
+                    image.onerror = () => applyFallbackImage(image, 0);
+
+                    const caption = document.createElement('div');
+                    caption.className = 'carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3';
+                    const captionTitle = document.createElement('h5');
+                    captionTitle.textContent = img.title;
+                    caption.appendChild(captionTitle);
+
+                    item.appendChild(image);
+                    item.appendChild(caption);
+                    carouselInner.appendChild(item);
+
+                    const thumbCol = document.createElement('div');
+                    thumbCol.className = 'col-2';
+                    const thumbWrap = document.createElement('div');
+                    thumbWrap.style.cursor = 'pointer';
+                    thumbWrap.style.opacity = index === 0 ? '1' : '0.72';
+                    thumbWrap.onclick = () => {
+                        const carouselEl = document.getElementById('hotelCarousel');
+                        const carousel = bootstrap.Carousel.getOrCreateInstance(carouselEl);
+                        carousel.to(index);
+                    };
+
+                    const thumbImage = document.createElement('img');
+                    thumbImage.className = 'gallery-thumb img-fluid';
+                    thumbImage.alt = `${img.title} thumbnail`;
+                    thumbImage.src = img.url;
+                    thumbImage.loading = 'lazy';
+                    thumbImage.decoding = 'async';
+                    thumbImage.onerror = () => {
+                        thumbImage.onerror = null;
+                        thumbImage.src = fallbackUrls[0];
+                    };
+
+                    thumbWrap.appendChild(thumbImage);
+                    thumbCol.appendChild(thumbWrap);
+                    thumbnails.appendChild(thumbCol);
+                });
+            }
+
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            renderGallery();
+                            observer.disconnect();
+                        }
+                    });
+                }, { rootMargin: '250px 0px' });
+                observer.observe(gallerySection);
+            } else {
+                renderGallery();
+            }
+        });
+    </script>
+    <script nonce="{{ csp_nonce }}">
+    // Book Offer button logic (ensure this runs after all DOM is loaded)
+    window.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.book-offer-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const offer = encodeURIComponent(this.getAttribute('data-offer'));
+                // Redirect to booking/payment page with offer in query string
+                window.location.href = `/guest/book?offer=${offer}`;
+            });
+        });
+    });
+    </script>
+</body>
+
+</html>
