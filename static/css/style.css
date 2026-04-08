@@ -1623,6 +1623,25 @@ body::before {
     .stay-service-form .col-12:last-child {
         margin-top: 0.15rem;
     }
+
+    .guest-booking-row {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+
+    .guest-booking-meta {
+        width: 100%;
+    }
+
+    .guest-booking-actions {
+        width: 100%;
+    }
+
+    .guest-booking-action-btn {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* Enhancements for Premium UI */
