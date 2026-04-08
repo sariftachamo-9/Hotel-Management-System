@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Guests{% endblock %}
+{% block sidebar %}{{ super() }}{% endblock %}
+{% block content %}
+<div class="card mt-4 mb-4 admin-readable-card" id="add-guest-form">
+    <div class="card-body">
+        <h2 class="card-title mb-4">Add Guest Manually</h2>
+        <form method="POST" action="{{ url_for('admin.add_guest') }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="full_name">Full Name</label>
+                    <input class="form-control" id="full_name" name="full_name" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="email">Email</label>
+                    <input class="form-control" id="email" name="email" type="email" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="phone">Phone</label>
+                    <input class="form-control" id="phone" name="phone" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="id_type">ID Type</label>
+                    <select class="form-select" id="id_type" name="id_type" required>
+                        <option value="citizenship">Citizenship</option>
+                        <option value="passport">Passport</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="id_number">ID Number</label>
+                    <input class="form-control" id="id_number" name="id_number" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="nationality">Nationality</label>
+                    <input class="form-control" id="nationality" name="nationality">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="emergency_contact">Emergency Contact</label>
+                    <input class="form-control" id="emergency_contact" name="emergency_contact">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="password">Temporary Password</label>
+                    <input class="form-control" id="password" name="password" type="password" placeholder="Temporary password">
+                </div>
+                <div class="col-12">
+                    <label class="form-label" for="address">Address</label>
+                    <textarea class="form-control" id="address" name="address" rows="2"></textarea>
+                </div>
+            </div>
+            <div class="mt-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Add Guest</button>
+                <a href="{{ url_for('admin.bookings') }}" class="btn btn-outline-light">Go To Bookings</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4 mb-4 admin-readable-card">
+    <div class="card-body">
+        <h2 class="card-title mb-4">Reset Guest Password</h2>
+        <form method="POST" action="#" id="guest-password-reset-form">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label" for="guest_id">Guest Account</label>
+                    <select class="form-select" id="guest_id" required data-reset-action-base="{{ url_for('admin.guests') }}">
+                        <option value="">Select Guest</option>
+                        {% for guest in guests %}
+                        <option value="{{ guest.id }}">{{ guest.full_name }}{% if guest.email %} ({{ guest.email }}){% endif %}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label" for="master_key">Master Key</label>
+                    <input class="form-control" id="master_key" name="master_key" type="password" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" for="new_password">New Password</label>
+                    <input class="form-control" id="new_password" name="new_password" type="password" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label" for="confirm_password">Confirm</label>
+                    <input class="form-control" id="confirm_password" name="confirm_password" type="password" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-warning mt-3">Reset Password</button>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4 admin-readable-card">
+	<div class="card-body">
+		<h2 class="card-title mb-4">All Guests</h2>
+		<div class="table-responsive">
+			<table class="table table-striped table-bordered align-middle admin-data-table">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Name</th>
+						<th>Phone</th>
+						<th>Email</th>
+						<th>ID Type</th>
+						<th>ID Number</th>
+						<th>Nationality</th>
+                        <th>Last Check-In</th>
+                        <th>Last Check-Out</th>
+                        <th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for guest in guests %}
+                    {% set latest_booking = guest.bookings|sort(attribute='created_at')|last if guest.bookings else None %}
+                    {% set latest_stay = latest_booking.stay if latest_booking and latest_booking.stay else None %}
+					<tr>
+						<td class="text-light">{{ guest.id }}</td>
+						<td class="text-light">{{ guest.full_name }}</td>
+						<td class="text-light">{{ guest.phone }}</td>
+						<td class="text-light">{{ guest.email }}</td>
+						<td class="text-light">{{ guest.id_type }}</td>
+						<td class="text-light">{{ guest.id_number }}</td>
+                        <td class="text-light">{{ guest.nationality or '-' }}</td>
+                        <td class="text-light">{{ latest_stay.actual_check_in if latest_stay and latest_stay.actual_check_in else 'N/A' }}</td>
+                        <td class="text-light">{{ latest_stay.actual_check_out if latest_stay and latest_stay.actual_check_out else 'N/A' }}</td>
+                        <td><a href="{{ url_for('admin.walkin_checkin', guest_id=guest.id) }}" class="btn btn-sm btn-outline-dark">Check In</a></td>
+					</tr>
+					{% else %}
+					<tr><td colspan="10" class="text-center text-light">No guests found.</td></tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary mt-3"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+	</div>
+</div>
+{% endblock %}

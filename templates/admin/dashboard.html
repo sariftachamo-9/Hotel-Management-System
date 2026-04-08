@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block sidebar %}
+<li class="active">
+    <a href="{{ url_for('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.settings') }}"><i class="bi bi-gear"></i> Hotel Settings</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.rooms') }}"><i class="bi bi-door-open"></i> Rooms</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.bookings') }}"><i class="bi bi-calendar-check"></i> Bookings</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.guests') }}"><i class="bi bi-people"></i> Guests</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.finance') }}"><i class="bi bi-cash-coin"></i> Finance</a>
+</li>
+<li>
+    <a href="{{ url_for('admin.support_tickets') }}"><i class="bi bi-envelope"></i> Support Tickets</a>
+</li>
+{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+    <div class="col-md-8">
+        <h2 style="font-family: 'Playfair Display', serif; color: var(--primary-color);">Dashboard Overview</h2>
+        <p class="text-white-50">Welcome back, {{ current_user.email }}</p>
+    </div>
+    <!-- Removed New Booking button for admin dashboard -->
+</div>
+
+<div class="row g-3 mb-4 dashboard-stats-row row-cols-1 row-cols-sm-2 row-cols-lg-5">
+    <!-- Stats Widgets -->
+    <div class="col">
+        <div class="stats-card">
+            <div class="icon"><i class="bi bi-door-open"></i></div>
+            <div class="number">{{ total_rooms }}</div>
+            <div class="label">Total Rooms</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="stats-card">
+            <div class="icon"><i class="bi bi-person-check"></i></div>
+            <div class="number">{{ today_checkins|length }}</div>
+            <div class="label">Check-ins Today</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="stats-card">
+            <div class="icon"><i class="bi bi-calendar-event"></i></div>
+            <div class="number">{{ active_bookings }}</div>
+            <div class="label">Active Bookings</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="stats-card">
+            <div class="icon"><i class="bi bi-house-check"></i></div>
+            <div class="number">{{ current_stays }}</div>
+            <div class="label">Currently Staying</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="stats-card">
+            <div class="icon"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="number">{{ occupancy_rate }}%</div>
+            <div class="label">Occupancy Rate</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card h-100 admin-readable-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="mb-0">Recent Activity</span>
+                <a href="{{ url_for('admin.bookings') }}" class="btn btn-sm btn-outline-light">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive recent-activity-table-wrapper">
+                    <table class="table table-hover align-middle recent-activity-table">
+                        <thead>
+                            <tr>
+                                <th>Guest</th>
+                                <th>Action</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if recent_activity %}
+                            {% for activity in recent_activity %}
+                            <tr>
+                                <td>{{ activity.guest_name }}</td>
+                                <td>{{ activity.action }}</td>
+                                <td>{{ activity.time }}</td>
+                                <td><span class="badge bg-{{ activity.status_color }}">{{ activity.status }}</span></td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-1 d-block mb-3 opacity-50"></i>
+                                    No recent activity to display
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card h-100 admin-readable-card">
+            <div class="card-header">
+                <span class="mb-0">Quick Actions</span>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-3">
+                    <a href="{{ url_for('admin.manage_room_types') }}" class="btn btn-outline-light text-start p-3">
+                        <i class="bi bi-gear me-2 text-warning"></i> Manage Room Types
+                    </a>
+                    <a href="{{ url_for('admin.staff') }}" class="btn btn-outline-light text-start p-3">
+                        <i class="bi bi-people me-2 text-info"></i> Manage Staff
+                    </a>
+                    <a href="{{ url_for('admin.reports') }}" class="btn btn-outline-light text-start p-3">
+                        <i class="bi bi-file-text me-2 text-success"></i> View Reports
+                    </a>
+                    <a href="{{ url_for('admin.service_options') }}" class="btn btn-outline-light text-start p-3">
+                        <i class="bi bi-basket2 me-2 text-warning"></i> Service Options
+                    </a>
+                    <a href="{{ url_for('admin.service_orders') }}" class="btn btn-outline-light text-start p-3">
+                        <i class="bi bi-bag-check me-2 text-info"></i> Service Orders
+                    </a>
+                    <a href="{{ url_for('admin.account') }}" class="btn btn-outline-light text-start p-3">
+                        <i class="bi bi-person-badge me-2 text-primary"></i> Admin Account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

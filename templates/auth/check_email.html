@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Your Email</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Lato', sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(212, 175, 55, 0.14), transparent 30%),
+                linear-gradient(135deg, #070b14 0%, #101826 48%, #1a2433 100%);
+            color: #f8fafc;
+        }
+        .panel {
+            background: rgba(10, 15, 24, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.24);
+            border-radius: 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(12px);
+        }
+        .brand {
+            font-family: 'Playfair Display', serif;
+            color: #d4af37;
+            letter-spacing: 0.08em;
+        }
+        .email-pill {
+            display: inline-block;
+            padding: 0.7rem 1rem;
+            border-radius: 999px;
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.26);
+            color: #f9e8b2;
+            word-break: break-word;
+        }
+        .step {
+            border-left: 3px solid rgba(212, 175, 55, 0.55);
+            padding-left: 1rem;
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, #d4af37, #b8891f);
+            border: 0;
+            color: #10131a;
+            font-weight: 700;
+        }
+        .btn-gold:hover {
+            color: #10131a;
+        }
+    </style>
+</head>
+<body class="d-flex align-items-center justify-content-center px-3 py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-9 col-lg-7">
+                <div class="panel p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="brand h2 mb-2">HMS</div>
+                        <h1 class="h3 mb-2">Check Your Email</h1>
+                        <p class="text-white-50 mb-0">Please confirm your Gmail ID to unlock your dashboard.</p>
+                    </div>
+
+                    {% if email %}
+                    <div class="text-center mb-4">
+                        <p class="text-white-50 mb-2">Destination email</p>
+                        <div class="email-pill">{{ email }}</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="step mb-4">
+                        <p class="mb-2">1. Open the email we just sent.</p>
+                        <p class="mb-2">2. Click the confirmation link inside the message.</p>
+                        <p class="mb-0">3. Come back here and log in after your email is confirmed.</p>
+                    </div>
+
+                    <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-gold px-4">Go to Login</a>
+                        <a href="{{ url_for('public.home') }}" class="btn btn-outline-light px-4">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

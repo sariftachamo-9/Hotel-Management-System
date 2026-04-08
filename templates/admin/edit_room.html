@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Edit Room{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Room #{{ room.room_number }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.edit_room', room_id=room.id) }}">
+                        <div class="mb-3">
+                            <label for="room_number" class="form-label">Room Number</label>
+                            <input type="text" class="form-control" id="room_number" name="room_number" value="{{ room.room_number }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="room_type_id" class="form-label">Room Type</label>
+                            <select class="form-select" id="room_type_id" name="room_type_id" required>
+                                {% for rt in room_types %}
+                                    <option value="{{ rt.id }}" {% if room.room_type_id == rt.id %}selected{% endif %}>{{ rt.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="floor" class="form-label">Floor</label>
+                            <input type="number" class="form-control" id="floor" name="floor" value="{{ room.floor }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="available" {% if room.status == 'available' %}selected{% endif %}>Available</option>
+                                <option value="reserved" {% if room.status == 'reserved' %}selected{% endif %}>Booked</option>
+                                <option value="occupied" {% if room.status == 'occupied' %}selected{% endif %}>Occupied</option>
+                                <option value="cleaning" {% if room.status == 'cleaning' %}selected{% endif %}>Cleaning</option>
+                                <option value="maintenance" {% if room.status == 'maintenance' %}selected{% endif %}>Maintenance</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="is_active" class="form-label">Active</label>
+                            <select class="form-select" id="is_active" name="is_active">
+                                <option value="1" {% if room.is_active %}selected{% endif %}>Yes</option>
+                                <option value="0" {% if not room.is_active %}selected{% endif %}>No</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <a href="{{ url_for('admin.rooms') }}" class="btn btn-secondary ms-2">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
