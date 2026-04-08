@@ -36,30 +36,30 @@
                         <ul class="list-unstyled mb-0">
                         {% for s in stay.service_usages %}
                             <li class="border-bottom py-2">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span>
+                                <div class="d-flex justify-content-between align-items-center mb-2 stay-service-header">
+                                    <span class="stay-service-name">
                                         {{ s.service.name if s.service else 'Service' }}
                                         x{{ s.quantity }}
                                         (Rs. {{ s.total_price }})
                                     </span>
                                     {% if s.order_status == 'received' %}
-                                    <span class="btn btn-sm btn-success disabled">Received</span>
+                                    <span class="btn btn-sm btn-success disabled stay-service-status">Received</span>
                                     {% else %}
-                                    <span class="btn btn-sm btn-outline-info disabled">Sent</span>
+                                    <span class="btn btn-sm btn-outline-info disabled stay-service-status">Sent</span>
                                     {% endif %}
                                 </div>
                                 {% if s.order_status != 'received' %}
-                                <form method="POST" action="{{ url_for('guest.edit_service_for_stay', usage_id=s.id) }}" class="row g-2 align-items-end mb-2">
+                                <form method="POST" action="{{ url_for('guest.edit_service_for_stay', usage_id=s.id) }}" class="row g-2 align-items-end mb-2 stay-service-form">
                                     <input type="hidden" name="service_id" value="{{ s.service_id }}">
-                                    <div class="col-md-2">
+                                    <div class="col-12 col-sm-3 col-md-2">
                                         <label class="form-label">Qty</label>
                                         <input class="form-control form-control-sm" type="number" min="1" name="quantity" value="{{ s.quantity }}">
                                     </div>
-                                    <div class="col-md-8">
+                                    <div class="col-12 col-sm-9 col-md-8">
                                         <label class="form-label">Notes</label>
                                         <input class="form-control form-control-sm" name="notes" value="{{ s.notes or '' }}" placeholder="Update your instructions">
                                     </div>
-                                    <div class="col-md-2 d-flex gap-2">
+                                    <div class="col-12 col-md-2 d-flex gap-2">
                                         <button class="btn btn-outline-light btn-sm w-100" type="submit">Update</button>
                                     </div>
                                 </form>
