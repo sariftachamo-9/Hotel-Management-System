@@ -1459,19 +1459,32 @@ body::before {
 
 /* Responsive */
 @media (max-width: 768px) {
+    .wrapper {
+        flex-direction: column;
+    }
+
     .sidebar {
-        margin-left: -280px;
-        /* Force hide by default using pixel value matching var */
+        position: relative;
+        top: auto;
+        left: auto;
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+        height: auto;
+        margin-left: 0;
+        border-right: 0;
+        border-bottom: 1px solid rgba(212, 175, 55, 0.22);
         box-shadow: none;
+        animation: none;
     }
 
     .sidebar.active {
         margin-left: 0;
-        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
-        /* Deep shadow when open */
+        box-shadow: none;
     }
 
     #content {
+        display: block;
         margin-left: 0;
         width: 100%;
         padding: 0;
@@ -1492,6 +1505,54 @@ body::before {
         /* Smaller padding on mobile */
     }
 
+    .sidebar-header {
+        padding: 20px 16px;
+    }
+
+    .sidebar-header h3 {
+        font-size: 1.4rem;
+    }
+
+    .sidebar ul.components {
+        padding: 10px 0 14px;
+    }
+
+    .sidebar ul li {
+        margin: 6px 8px;
+    }
+
+    .sidebar ul li a {
+        padding: 12px 14px;
+        font-size: 0.92rem;
+    }
+
+    .sidebar ul li a i {
+        margin-right: 12px;
+        font-size: 1.05rem;
+    }
+
+    .sidebar-footer {
+        padding: 16px;
+    }
+
+    .admin-page-header,
+    .row.align-items-center.mb-4,
+    .card-header.d-flex,
+    .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.75rem;
+    }
+
+    .d-flex.justify-content-between.align-items-center {
+        flex-wrap: wrap;
+    }
+
+    .row.align-items-center.mb-4 .col-md-4.text-end,
+    .row.align-items-center.mb-4 .text-end {
+        text-align: left !important;
+    }
+
     /* Overlay for mobile sidebar */
     .overlay {
         display: none;
@@ -1510,6 +1571,33 @@ body::before {
     .overlay.active {
         display: block;
         opacity: 1;
+    }
+}
+
+@media (max-width: 576px) {
+    .container,
+    .container-fluid,
+    .main-content {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .card-body {
+        padding: 18px;
+    }
+
+    .admin-page-title,
+    .section-title h2 {
+        font-size: 1.55rem;
+    }
+
+    .btn,
+    .btn-sm {
+        white-space: normal;
+    }
+
+    .table-responsive {
+        border-radius: 12px;
     }
 }
 
