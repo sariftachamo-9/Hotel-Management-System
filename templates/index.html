@@ -132,6 +132,7 @@
             color: white;
             position: relative;
             text-align: center;
+            isolation: isolate;
         }
 
         .hero-section::after {
@@ -140,6 +141,7 @@
             inset: 0;
             background: radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.18), transparent 55%);
             pointer-events: none;
+            z-index: -1;
         }
 
         .hero-content {
@@ -444,6 +446,7 @@
                 min-height: 88vh;
                 height: auto;
                 padding: 6.2rem 0 4rem;
+                background-attachment: scroll;
             }
 
             .hero-content h1 {
@@ -531,6 +534,22 @@
 
             .gallery-thumb {
                 height: 52px;
+            }
+
+            .hero-section {
+                background-image: linear-gradient(rgba(5, 5, 5, 0.74), rgba(11, 11, 11, 0.82));
+                overflow: hidden;
+            }
+
+            .hero-section::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80') center/cover no-repeat;
+                z-index: -2;
+                pointer-events: none;
+                transform: translateZ(0);
+                will-change: transform;
             }
         }
 
